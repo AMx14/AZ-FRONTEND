@@ -45,7 +45,7 @@ function SignUp() {
 
       if (response.ok) {
         alert('Sign Up successful!');
-        navigate(`/main/${email}`);
+        navigate(`/login`);
       } else {
         throw new Error(json.message || 'Sign Up failed!');
       }

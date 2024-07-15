@@ -20,21 +20,7 @@ const CreateMCQ = () => {
     } else {
       console.error('No access token found. Please log in.');
     }
-    fetchQuestionCount(token);
   }, [email]);
-
-  const fetchQuestionCount = async (token) => {
-    try {
-      const response = await axios.get(`http://localhost:8080/mcqs/count/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
-      setQuestionCount(response.data.count);
-    } catch (error) {
-      console.error('Error fetching question count:', error.response ? error.response.data : error.message);
-    }
-  };
 
   const handleFormOpen = () => {
     setShowForm(true);
@@ -42,7 +28,7 @@ const CreateMCQ = () => {
 
   const handleFormClose = () => {
     setShowForm(false);
-    fetchQuestionCount(accessToken);
+    setQuestionCount(prevCount => prevCount + 1); // Increment the question count
   };
 
   return (

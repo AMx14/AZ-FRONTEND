@@ -1,14 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import io from 'socket.io-client';
+import { UserContext } from './UserContext';
 
-const socket = io('http://localhost:3001');
+const socket = io('http://localhost:3000');
 
 const JoinLobby = () => {
   const { lobbyId } = useParams();
   const [lobbyCode, setLobbyCode] = useState(lobbyId || '');
-  const userEmail = 'user4@gmail.com'; // This should be dynamically set based on the logged-in user
   const navigate = useNavigate();
+  const { email } = useContext(UserContext); // Access email from UserContext
 
   useEffect(() => {
     socket.on('joinRequest', ({ lid, userEmail }) => {
@@ -17,18 +18,27 @@ const JoinLobby = () => {
   }, []);
 
   const handleJoinLobby = async () => {
-    const response = await fetch('http://localhost:3001/requestJoinLobby', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ lid: lobbyCode, userEmail })
-    });
-    const data = await response.json();
+    try {
+      const response = await fetch('http://localhost:8080/requestJoinLobby', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ lid: lobbyCode, userEmail: email })
+      });
 
-    if (data.message === 'Join request sent') {
-      socket.emit('joinLobby', { lid: lobbyCode, userEmail });
-      navigate('/');
-    } else {
-      alert(data.message);
+      if (!response.ok) {
+        throw new Error(`Error: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+
+      if (data.message === 'Join request sent') {
+        socket.emit('joinLobby', { lid: lobbyCode, userEmail: email });
+        navigate('/');
+      } else {
+        alert(data.message);
+      }
+    } catch (error) {
+      console.error('Failed to join lobby:', error.message);
     }
   };
 

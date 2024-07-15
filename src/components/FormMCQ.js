@@ -46,6 +46,8 @@ const FormMCQ = ({ lid, email, handleClose }) => {
         }
       });
       console.log('MCQ created:', response.data);
+      // Call handleClose to update question count in parent component
+      handleClose();
       // Reset form for the next MCQ
       setFormData({
         qid: '',

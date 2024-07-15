@@ -2,7 +2,11 @@ import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import '../styles/CreateLobby.css';
-import { UserContext } from './UserContext'; // Import the UserContext
+import { UserContext } from './UserContext';
+import io from 'socket.io-client';
+
+// Initialize Socket.IO client
+const socket = io('http://localhost:3000');
 
 const CreateLobby = () => {
   const { email } = useContext(UserContext); // Access email from UserContext
@@ -39,6 +43,14 @@ const CreateLobby = () => {
 
       console.log('Lobby created:', response.data);
       alert('Lobby created successfully!');
+
+      // Emit a createLobby event to the Socket.IO server
+      socket.emit('createLobby', {
+        lid: lobbyId,
+        lname: lobbyName,
+        lowneremail: email
+      });
+
       // Navigate to CreateMCQ page with lobbyId and email
       navigate(`/create-mcq/${lobbyId}`, { state: { email } });
     } catch (error) {

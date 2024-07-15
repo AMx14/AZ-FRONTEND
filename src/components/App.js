@@ -12,6 +12,7 @@ import Logout from './Logout';
 import CreateLobby from './CreateLobby';
 import JoinLobby from './JoinLobby';
 import CreateMCQ from './CreateMCQ';
+import WaitingPage from './waiting';
 
 function App() {
   return (
@@ -30,6 +31,8 @@ function App() {
           <Route path="/join-lobby" element={<JoinLobby />} />
           <Route path="/join-lobby/:lobbyId" element={<JoinLobby />} />
           <Route path="/create-mcq/:id" element={<CreateMCQ />} />
+          <Route path="/waiting" element={<WaitingPage />} />
+          <Route path="/join/:lobbyId" element={<JoinLobby  />} />
         </Routes>
       </Router>
     </UserProvider>

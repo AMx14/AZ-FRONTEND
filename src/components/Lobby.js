@@ -1,38 +1,47 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import io from 'socket.io-client';
+
+const socket = io('http://localhost:3000');
 
 const JoinLobby = () => {
-  const [lobbyCode, setLobbyCode] = useState('');
-  const [showForm, setShowForm] = useState(false);
+  const { lobbyId } = useParams();
+  const [lobbyCode, setLobbyCode] = useState(lobbyId || '');
+  const userEmail = 'user2@gmail.com'; // This should be dynamically set based on the logged-in user
+  const navigate = useNavigate();
 
-  const handleJoinClick = () => {
-    setShowForm(true);
-  };
+  useEffect(() => {
+    socket.on('joinRequest', ({ lid, userEmail }) => {
+      console.log(`User ${userEmail} requested to join lobby ${lid}`);
+    });
+  }, []);
 
-  const handleJoin = () => {
-    // Handle joining the lobby with lobbyCode
-    console.log(`Joining lobby with code: ${lobbyCode}`);
-    // Reset form after joining (optional)
-    setLobbyCode('');
-    setShowForm(false);
+  const handleJoinLobby = async () => {
+    const response = await fetch('http://localhost:3000/requestJoinLobby', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ lid: lobbyCode, userEmail })
+    });
+    const data = await response.json();
+
+    if (data.message === 'Join request sent') {
+      socket.emit('joinLobby', { lid: lobbyCode, userEmail });
+      navigate(`/waiting`);
+    } else {
+      alert(data.message);
+    }
   };
 
   return (
-    <div className="page-content">
+    <div className="join-lobby">
       <h1>Join Lobby</h1>
-      {!showForm && (
-        <button onClick={handleJoinClick}>Join Lobby</button>
-      )}
-      {showForm && (
-        <form onSubmit={handleJoin}>
-          <input
-            type="text"
-            placeholder="Enter Lobby Code"
-            value={lobbyCode}
-            onChange={(e) => setLobbyCode(e.target.value)}
-          />
-          <button type="submit">Join</button>
-        </form>
-      )}
+      <input
+        type="text"
+        placeholder="Enter Lobby Code"
+        value={lobbyCode}
+        onChange={(e) => setLobbyCode(e.target.value)}
+      />
+      <button onClick={handleJoinLobby}>Join</button>
     </div>
   );
 };
