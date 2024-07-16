@@ -3,26 +3,35 @@ import { useParams, useNavigate } from 'react-router-dom';
 import io from 'socket.io-client';
 import { UserContext } from './UserContext';
 
-const socket = io('http://localhost:3000');
+const socket = io('http://localhost:8080');
 
 const JoinLobby = () => {
   const { lobbyId } = useParams();
   const [lobbyCode, setLobbyCode] = useState(lobbyId || '');
   const navigate = useNavigate();
-  const { email } = useContext(UserContext); // Access email from UserContext
+  const { email } = useContext(UserContext);
 
   useEffect(() => {
-    socket.on('joinRequest', ({ lid, userEmail }) => {
-      console.log(`User ${userEmail} requested to join lobby ${lid}`);
+    socket.on('joinResponse', ({ accepted, lobbyId }) => {
+      if (accepted) {
+        console.log('Lobby joined');
+        navigate(`/lobby/${lobbyId}`);
+      } else {
+        alert('Join request declined');
+      }
     });
-  }, []);
+
+    return () => {
+      socket.off('joinResponse');
+    };
+  }, [navigate]);
 
   const handleJoinLobby = async () => {
     try {
-      const response = await fetch('http://localhost:8080/requestJoinLobby', {
+      const response = await fetch('http://localhost:8080/lobbies/requestJoinLobby', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ lid: lobbyCode, userEmail: email })
+        body: JSON.stringify({ lid: lobbyCode, participant: email }),
       });
 
       if (!response.ok) {
@@ -31,9 +40,8 @@ const JoinLobby = () => {
 
       const data = await response.json();
 
-      if (data.message === 'Join request sent') {
+      if (data.message === 'Join request sent to lobby owner') {
         socket.emit('joinLobby', { lid: lobbyCode, userEmail: email });
-        navigate('/');
       } else {
         alert(data.message);
       }
@@ -51,6 +59,7 @@ const JoinLobby = () => {
         value={lobbyCode}
         onChange={(e) => setLobbyCode(e.target.value)}
       />
+      <p>User Email: {email}</p>
       <button onClick={handleJoinLobby}>Join</button>
     </div>
   );

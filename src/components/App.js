@@ -31,8 +31,10 @@ function App() {
           <Route path="/join-lobby" element={<JoinLobby />} />
           <Route path="/join-lobby/:lobbyId" element={<JoinLobby />} />
           <Route path="/create-mcq/:id" element={<CreateMCQ />} />
-          <Route path="/waiting" element={<WaitingPage />} />
-          <Route path="/join/:lobbyId" element={<JoinLobby  />} />
+          
+          <Route path="/join/:lobbyId" element={<JoinLobby />} />
+        <Route path="/waiting" element={<WaitingPage />} />
+        
         </Routes>
       </Router>
     </UserProvider>
