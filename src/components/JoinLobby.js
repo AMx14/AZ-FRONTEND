@@ -91,50 +91,46 @@
 // export default JoinLobby;
 
 
-import React, {useState, useEffect, useContext} from 'react';
+// JoinLobby.js
+import React, { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { UserContext } from './UserContext';
 import { io } from 'socket.io-client';
-const socket = io('http://localhost:8085');
 
+const socket = io('http://localhost:8085');
 
 const JoinLobby = () => {
   const { lobbyId } = useParams();
   const [lobbyCode, setLobbyCode] = useState(lobbyId || '');
-  const { email } = useContext(UserContext); // Access email from UserContext// This should be dynamically set based on the logged-in user
+  const { email } = useContext(UserContext); // Access email from UserContext
   const navigate = useNavigate();
 
-  useEffect(() => {
-    socket.on("joinRequest-not", (data) => {
-      alert(`New participant ${data.participant} joined lobby ${data.lobbyId}`);
-    })
-  }, [socket]);
-
-
   const handleJoinLobby = async () => {
-    const response = await fetch('http://localhost:8085/requestJoinLobby', {
+    const response = await fetch('http://localhost:8085/lobbies/requestJoinLobby', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ lid: lobbyCode, participant:email })
+      body: JSON.stringify({ lid: lobbyCode, participant: email })
     });
     const data = await response.json();
 
     if (response.status === 200) {
-        alert(`You have joined lobby ${lobbyId}`);
-        socket.emit('joinRequest', { lobbyId: lobbyId, participant:email });
-      }
+      alert(`You have joined lobby ${lobbyId}`);
+      socket.emit('joinRequest', { lobbyId: lobbyId, participant: email });
+      navigate(`/lobby/${lobbyId}`); // Redirect to lobby page
     }
+  };
+
   return (
-      <div className="join-lobby">
-        <h1>Join Lobby</h1>
-        <input
-            type="text"
-            placeholder="Enter Lobby Code"
-            value={lobbyCode}
-            onChange={(e) => setLobbyCode(e.target.value)}
-        />
-        <button onClick={handleJoinLobby}>Join</button>
-      </div>
+    <div className="join-lobby">
+      <h1>Join Lobby</h1>
+      <input
+        type="text"
+        placeholder="Enter Lobby Code"
+        value={lobbyCode}
+        onChange={(e) => setLobbyCode(e.target.value)}
+      />
+      <button onClick={handleJoinLobby}>Join</button>
+    </div>
   );
 };
 

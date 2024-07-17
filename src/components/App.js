@@ -1,4 +1,3 @@
-// src/App.js
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { UserProvider } from './UserContext';
@@ -12,6 +11,7 @@ import Logout from './Logout';
 import CreateLobby from './CreateLobby';
 import JoinLobby from './JoinLobby';
 import CreateMCQ from './CreateMCQ';
+
 
 function App() {
   return (
@@ -30,6 +30,7 @@ function App() {
           <Route path="/join-lobby" element={<JoinLobby />} />
           <Route path="/join-lobby/:lobbyId" element={<JoinLobby />} />
           <Route path="/create-mcq/:id" element={<CreateMCQ />} />
+        
         </Routes>
       </Router>
     </UserProvider>

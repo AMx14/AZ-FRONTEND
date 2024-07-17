@@ -7,8 +7,8 @@ export const UserProvider = ({ children }) => {
   const [token, setToken] = useState('');
 
   return (
-      <UserContext.Provider value={{ email, setEmail, token, setToken }}>
-        {children}
-      </UserContext.Provider>
+    <UserContext.Provider value={{ email, setEmail, token, setToken }}>
+      {children}
+    </UserContext.Provider>
   );
 };
