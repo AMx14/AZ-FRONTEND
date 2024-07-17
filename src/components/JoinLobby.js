@@ -129,6 +129,7 @@ const JoinLobby = () => {
         value={lobbyCode}
         onChange={(e) => setLobbyCode(e.target.value)}
       />
+      <p>User Email: {email}</p>
       <button onClick={handleJoinLobby}>Join</button>
     </div>
   );
