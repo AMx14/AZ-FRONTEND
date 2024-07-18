@@ -17,7 +17,7 @@ const JoinLobby = () => {
   }, []);
 
   const handleJoinLobby = async () => {
-    const response = await fetch('http://localhost:3000/requestJoinLobby', {
+    const response = await fetch('http://localhost:8085/lobbies/requestJoinLobby', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ lid: lobbyCode, userEmail })

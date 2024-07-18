@@ -8,9 +8,11 @@ const CreateMCQ = () => {
   const { id } = useParams();
   const location = useLocation();
   const email = location.state?.email || '';
+  const initialQuestionId = location.state?.questionId || 1; // Read initial question ID from location state
 
   const [questionCount, setQuestionCount] = useState(0);
   const [showForm, setShowForm] = useState(false);
+  const [questionId, setQuestionId] = useState(initialQuestionId);
   const [accessToken, setAccessToken] = useState('');
 
   useEffect(() => {
@@ -29,6 +31,7 @@ const CreateMCQ = () => {
   const handleFormClose = () => {
     setShowForm(false);
     setQuestionCount(prevCount => prevCount + 1); // Increment the question count
+    setQuestionId(prevId => prevId + 1); // Increment the question ID
   };
 
   return (
@@ -49,7 +52,7 @@ const CreateMCQ = () => {
               Create MCQ
             </Button>
           </Grid>
-          {showForm && <FormMCQ lid={id} email={email} handleClose={handleFormClose} />} {/* Pass lid and email as props to FormMCQ */}
+          {showForm && <FormMCQ lid={id} email={email} questionId={questionId} handleClose={handleFormClose} />}
           <Grid container justifyContent="flex-end">
             <Button component={Link} to={`/main`} variant="outlined" color="secondary">
               Go Back

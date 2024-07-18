@@ -1,108 +1,4 @@
-// import React, { useState, useEffect, useRef } from 'react';
-// import { Grid, Paper, TextField, Button, Typography } from '@mui/material';
-// import axios from 'axios';
-// import { io } from 'socket.io-client';
-// const socket = io('http://localhost:8085');
-//
-// const CreateLobby = () => {
-//   const [lid, setLid] = useState('');
-//   const [lname, setLname] = useState('');
-//   const [lowneremail, setLowneremail] = useState('');
-//   const [error, setError] = useState('');
-//
-//   const handleLidChange = (event) => setLid(event.target.value);
-//   const handleLnameChange = (event) => setLname(event.target.value);
-//   const handleLowneremailChange = (event) => setLowneremail(event.target.value);
-//
-//   useEffect(() => {
-//     socket.on("joinRequest-not", (data) => {
-//       alert(`New participant ${data.participant} joined lobby ${data.lobbyId}`);
-//     })
-//   }, [socket]);
-//
-//   const handleCreateLobby = async (event) => {
-//     event.preventDefault();
-//     if (!lid || !lname || !lowneremail) {
-//       setError('Please provide all required fields.');
-//       return;
-//     }
-//     const accessToken = localStorage.getItem(lowneremail);
-//     if (!accessToken) {
-//       setError('Access token not found.');
-//       return;
-//     }
-//     try {
-//       const response = await axios.post('http://localhost:8085/lobbies/createLobby', {
-//         lid,
-//         lname,
-//         lowneremail,
-//       }, {
-//         headers: {
-//           'Authorization': `Bearer ${accessToken}`,
-//           'Content-Type': 'application/json',
-//         },
-//       });
-//       if (response.status === 201) {
-//         alert('Lobby created successfully');
-//         socket.emit('joinLobbyOwner', { lobbyId: lid, ownerEmail: lowneremail });
-//       }
-//     } catch (error) {
-//       setError(error.response?.data?.message || 'Failed to create lobby');
-//     }
-//   };
-//
-//   return (
-//       <Grid container justifyContent="center" alignItems="center" style={{ minHeight: '100vh' }}>
-//         <Paper elevation={10} style={{ padding: 20, width: 400 }}>
-//           <Typography variant="h5" align="center" gutterBottom>
-//             Create Lobby
-//           </Typography>
-//           {error && <Typography color="error" align="center">{error}</Typography>}
-//           <form onSubmit={handleCreateLobby}>
-//             <TextField
-//                 label="Lobby ID"
-//                 placeholder="Enter lobby ID"
-//                 fullWidth
-//                 required
-//                 value={lid}
-//                 onChange={handleLidChange}
-//                 style={{ marginBottom: 16 }}
-//             />
-//             <TextField
-//                 label="Lobby Name"
-//                 placeholder="Enter lobby name"
-//                 fullWidth
-//                 required
-//                 value={lname}
-//                 onChange={handleLnameChange}
-//                 style={{ marginBottom: 16 }}
-//             />
-//             <TextField
-//                 label="Owner Email"
-//                 placeholder="Enter owner email"
-//                 fullWidth
-//                 required
-//                 value={lowneremail}
-//                 onChange={handleLowneremailChange}
-//                 style={{ marginBottom: 16 }}
-//             />
-//             <Button
-//                 type="submit"
-//                 color="primary"
-//                 variant="contained"
-//                 fullWidth
-//             >
-//               Create Lobby
-//             </Button>
-//           </form>
-//         </Paper>
-//       </Grid>
-//   );
-// };
-//
-// export default CreateLobby;
-
-
+/*
 import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -202,6 +98,112 @@ const CreateLobby = () => {
         </div>
         <button className="create-lobby-button" onClick={handleCreateLobby}>Create Lobby</button>
       </div>
+  );
+};
+
+export default CreateLobby;
+*/
+import React, { useState, useEffect, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Button, Grid, Paper, Typography, TextField } from '@mui/material'; // Added TextField import
+
+import axios from 'axios';
+import { io } from 'socket.io-client';
+import { UserContext } from './UserContext'; // Import the UserContext
+
+const socket = io('http://localhost:8085');
+
+const CreateLobby = () => {
+  const { email } = useContext(UserContext); // Access email from UserContext
+  const [lobbyId, setLobbyId] = useState('');
+  const [lobbyName, setLobbyName] = useState('');
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!email) {
+      alert('User email not found. Please log in.');
+      navigate('/login'); // Redirect to login if email is not found
+    }
+  }, [email, navigate]);
+
+  const handleCreateLobby = async () => {
+    try {
+      const authToken = localStorage.getItem(email); // Get the auth token using email
+
+      if (!authToken) {
+        alert('Authentication token not found. Please log in.');
+        return;
+      }
+
+      const response = await axios.post('http://localhost:8085/lobbies/createLobby', {
+        lid: lobbyId,
+        lname: lobbyName,
+        lowneremail: email
+      }, {
+        headers: {
+          'Authorization': `Bearer ${authToken}` // Include token in headers
+        }
+      });
+
+      if (response.status === 201) {
+        alert('Lobby created successfully');
+        socket.emit('joinLobbyOwner', { lid: lobbyId, lowneremail: email });
+
+        // Navigate to CreateMCQ page with lobbyId and initial questionId (1)
+        navigate(`/create-mcq/${lobbyId}`, { state: { email, questionId: 1 } });
+      }
+
+    } catch (error) {
+      console.error('Failed to create lobby:', error);
+      alert(`Failed to create lobby: ${error.response ? error.response.data.message : error.message}`);
+    }
+  };
+
+  return (
+    <Grid container justifyContent="center" alignItems="center" style={{ minHeight: '100vh' }}>
+      <Paper elevation={10} style={{ padding: 20, width: 400 }}>
+        <Typography variant="h5" align="center" gutterBottom>
+          Create Lobby
+        </Typography>
+        <form onSubmit={(e) => { e.preventDefault(); handleCreateLobby(); }}>
+          <TextField
+            label="Lobby ID"
+            placeholder="Enter lobby ID"
+            fullWidth
+            required
+            value={lobbyId}
+            onChange={(e) => setLobbyId(e.target.value)}
+            style={{ marginBottom: 16 }}
+          />
+          <TextField
+            label="Lobby Name"
+            placeholder="Enter lobby name"
+            fullWidth
+            required
+            value={lobbyName}
+            onChange={(e) => setLobbyName(e.target.value)}
+            style={{ marginBottom: 16 }}
+          />
+          <TextField
+            label="Owner Email"
+            placeholder="Enter owner email"
+            fullWidth
+            required
+            value={email}
+            readOnly
+            style={{ marginBottom: 16 }}
+          />
+          <Button
+            type="submit"
+            color="primary"
+            variant="contained"
+            fullWidth
+          >
+            Create Lobby
+          </Button>
+        </form>
+      </Paper>
+    </Grid>
   );
 };
 

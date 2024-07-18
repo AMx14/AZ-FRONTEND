@@ -11,6 +11,7 @@ import Logout from './Logout';
 import CreateLobby from './CreateLobby';
 import JoinLobby from './JoinLobby';
 import CreateMCQ from './CreateMCQ';
+import StartGame from './StartGame';
 
 
 function App() {
@@ -30,6 +31,8 @@ function App() {
           <Route path="/join-lobby" element={<JoinLobby />} />
           <Route path="/join-lobby/:lobbyId" element={<JoinLobby />} />
           <Route path="/create-mcq/:id" element={<CreateMCQ />} />
+          
+          <Route path="/startGame/:lobbyId" element={<StartGame />} />
         
         </Routes>
       </Router>

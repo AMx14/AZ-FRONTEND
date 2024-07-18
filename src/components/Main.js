@@ -19,7 +19,7 @@ const Main = () => {
     } else {
       console.error('No access token found. Please log in.');
       // Optionally, redirect to login page
-      // navigate('/login');
+       navigate('/login');
     }
   }, [email, navigate]);
 
