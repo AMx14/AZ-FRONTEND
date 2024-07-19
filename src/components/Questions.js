@@ -1,21 +1,32 @@
 import React from 'react';
+import { Typography, RadioGroup, FormControlLabel, Radio } from '@mui/material';
 
-const Questions = ({ question }) => {
-    if (!question || !question.qoptions) {
-      return <div>No question available</div>;
-    }
-  
-    return (
-      <div>
-        <h2>{question.qname}</h2>
-        <ul>
-          {question.qoptions.map((option, index) => (
-            <li key={index}>{option}</li>
-          ))}
-        </ul>
-      </div>
-    );
-  };
-  
-  export default Questions;
-  
+const Questions = ({ question, selectedOption, handleOptionChange }) => {
+  if (!question || !question.qoptions) {
+    return <Typography variant="h6" align="center">No question available</Typography>;
+  }
+
+  return (
+    <div>
+      <Typography variant="h6" align="center" gutterBottom>
+        {question.qname}
+      </Typography>
+      <RadioGroup
+        value={selectedOption}
+        onChange={handleOptionChange}
+        style={{ marginBottom: 16 }}
+      >
+        {question.qoptions.map((option, index) => (
+          <FormControlLabel
+            key={index}
+            value={option}
+            control={<Radio />}
+            label={option}
+          />
+        ))}
+      </RadioGroup>
+    </div>
+  );
+};
+
+export default Questions;

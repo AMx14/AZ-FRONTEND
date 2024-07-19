@@ -303,8 +303,8 @@ const StartGame = () => {
   );
 };
 
-export default StartGame;*/
-
+export default StartGame;
+*/
 import React, { useState, useEffect, useContext } from 'react';
 import { Grid, Paper, TextField, Button, Typography } from '@mui/material';
 import { useParams, useNavigate } from 'react-router-dom';
@@ -360,12 +360,11 @@ const StartGame = () => {
     fetchLobbyDetails();
 
     socket.emit('joinLobby', { lobbyId: lobbyId, participant: email });
-    
-    socket.on("firstMcq", (data) => {
-        alert("Fist mcq received");
-        console.log(data.mcq);
-    })
+    socket.on('firstMcq', (data) => {
+      alert('First MCQ received');
+      console.log(data.mcq);
 
+    });
 
   }, [lobbyId, email, accessToken, navigate]);
 
@@ -391,10 +390,11 @@ const StartGame = () => {
       if (response.status === 200) {
         alert('Game started successfully');
         console.log(response.data.mcq);
-        socket.emit('gameStarted', { lobbyId: lobbyId, message: 'game started', mcq: response.data.mcq });
-      }
-     
 
+
+        socket.emit('gameStarted', { lobbyId: lobbyId, message: 'game started', mcq: response.data.mcq });
+
+      }
     } catch (error) {
       console.error('Error starting game:', error);
       setError(error.response?.data?.message || 'Failed to start game');
