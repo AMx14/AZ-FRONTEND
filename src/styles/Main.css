@@ -90,21 +90,25 @@ body {
 }
 
 .scrollable-list {
-  max-height: 400px;
+  max-height: 400px; 
   overflow-y: auto;
 }
 
 .lobby-item {
-  background-color: var(--primary-color);
+  padding: 10px 15px;
   margin-bottom: 10px;
-  padding: 15px;
+  background: linear-gradient(135deg, #333, #111);
+  border: 1px solid #ff8c00;
+  color: #fff;
   border-radius: 5px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background 0.3s ease, transform 0.3s ease;
+  font-family: Arial, sans-serif;
 }
 
 .lobby-item:hover {
-  background-color: var(--hover-color);
+  background: linear-gradient(135deg, #ff8c00, #ff4500);
+  transform: scale(1.05);
 }
 
 /* Scrollbar Styles */
@@ -125,39 +129,17 @@ body {
   background-color: var(--hover-color);
 }
 
-.lobby-item {
-  padding: 10px 15px;
-  margin-bottom: 10px;
-  background: linear-gradient(135deg, #333, #111);
-  border: 1px solid #ff8c00; /* Changed border color */
-  color: #fff;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background 0.3s ease, transform 0.3s ease;
-  font-family: Arial, sans-serif; /* Added game-like font */
-}
-
-.lobby-item:hover {
-  background: linear-gradient(135deg, #ff8c00, #ff4500);
-  transform: scale(1.05);
-}
-
-/*.login-page {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  background-color: #f0f0f0;
-}*/
+/* Animated Letters */
 .animated-letters-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 150px; /* Increased height for larger text */
-  background-color: #000000; /* AMOLED black */
+  height: 150px;
+  background-color: #000000;
 }
 
 .animated-letters {
-  font-size: 4.5rem; /* Increased font size */
+  font-size: 4.5rem;
   font-weight: bold;
   font-family: "Oswald", sans-serif;
   color: #fff;
@@ -177,7 +159,7 @@ body {
   }
 }
 
-/* Style for the login form container */
+/* Login Form Container */
 .login-form-container {
   background-color: blanchedalmond;
   border-radius: 8px;
